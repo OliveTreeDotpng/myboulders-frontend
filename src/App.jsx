@@ -6,6 +6,7 @@ import StyleGuide from './pages/StyleGuide'
 import LandingPage from './pages/LandingPage'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import Dashboard from './pages/Dashboard'
 
 function App() {
   const [showStyleGuide, setShowStyleGuide] = useState(false)
@@ -30,6 +31,7 @@ function App() {
         <Route path="/" element={<LandingPage onStyleGuideClick={() => setShowStyleGuide(true)} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   )
