@@ -8,9 +8,10 @@ export const login = async (userData) => {
     return response.data
   } catch (error) {
     console.error('Error logging in:', error)
-    throw error    
+    throw new Error(error?.response?.data?.error || 'Login failed');
   } 
 }
+
 
 export const logout = async () => {
   try {

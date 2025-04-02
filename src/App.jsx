@@ -6,6 +6,9 @@ import StyleGuide from './pages/StyleGuide'
 import LandingPage from './pages/LandingPage'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import UserSearch from './pages/UserSearch'
+import UserProfile from './pages/UserProfile'
+import Dashboard from './pages/Dashboard'  // Add this import
 import Leaderboard from './pages/Leaderboard'
 
 function App() {
@@ -31,6 +34,10 @@ function App() {
         <Route path="/" element={<LandingPage onStyleGuideClick={() => setShowStyleGuide(true)} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/search" element={<UserSearch />} />
+        <Route path="/profile/:id" element={<UserProfile />} />
+        <Route path="/dashboard" element={<Dashboard />} />  {/* Add this route */}
         <Route path="/leaderboard" element={<Leaderboard />} />
       </Routes>
     </Router>
