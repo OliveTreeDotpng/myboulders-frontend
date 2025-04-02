@@ -1,14 +1,57 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import { login } from "../services/authApi";
 
-const Login = () => {
+function LoginForm({ onLoginSuccess }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await login({ username, password });
+      setErrorMessage("");
+      onLoginSuccess(); // Redirect to /dashboard
+    } catch (error) {
+      setErrorMessage(error.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div>
-      <h1>Login Page</h1>
-      <p>This page is under construction.</p>
-      <Link to="/">Back to Home</Link>
-    </div>
-  );
-};
+    <form onSubmit={handleSubmit}>
+      <h2>Logga in</h2>
 
-export default Login;
+      {errorMessage && <p style={{ color: "red" }} aria-live="polite">{errorMessage}</p>}
+
+      <div>
+        <label>Username:</label>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+      </div>
+
+      <div>
+        <label>Password:</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
+
+      <button type="submit" disabled={loading}>
+        {loading ? "Logging in..." : "Log in"}
+      </button>
+    </form>
+  );
+}
+
+export default LoginForm;

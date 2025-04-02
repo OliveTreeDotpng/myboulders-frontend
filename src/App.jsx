@@ -33,6 +33,7 @@ function App() {
         <Route path="/" element={<LandingPage onStyleGuideClick={() => setShowStyleGuide(true)} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/search" element={<UserSearch />} />
         <Route path="/profile/:id" element={<UserProfile />} />
         <Route path="/dashboard" element={<Dashboard />} />  {/* Add this route */}
