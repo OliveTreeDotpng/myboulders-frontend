@@ -18,6 +18,7 @@ function UserSearch() {
     const [userData, setUserData] = useState(null);    // userData = holds the user info returned from the backend
     const [error, setError] = useState(null);          // error = stores an error message if something goes wrong
     const [isLoading, setIsLoading] = useState(false); // isLoading = tracks whether the search is in progress
+    const [achievements, setAchievements] = useState([]); // Add state for achievements
 
     const navigate = useNavigate(); // Hook for navigation
 
@@ -30,24 +31,45 @@ function UserSearch() {
 
         setIsLoading(true);
         try {
-            // Support both username and ID search
-            const isNumeric = !isNaN(username);
-            const searchParam = isNumeric 
-                ? `user_id=${username}`
-                : `username=${username}`;
-
-            // Make a GET request to the backend to search for the user
-            // The response will contain the user data if found
-            const response = await axiosInstance.get(`/search?${searchParam}`);
+            let response;
+            if (username.toLowerCase() === "admin") {
+                // Special case for admin
+                response = await axiosInstance.get(`/users/search?username=admin`);
+            } else if (!isNaN(username)) {
+                // If input is a number, search by user_id
+                response = await axiosInstance.get(`/users/search?user_id=${username}`);
+            } else {
+                // Search by username for all other cases
+                response = await axiosInstance.get(`/users/search?username=${username}`);
+            }
+            
             setUserData(response.data);
+            
+            // Fetch achievements for the user
+            try {
+                const achievementsResponse = await axiosInstance.get(`/users/${response.data.id}/achievements`);
+                setAchievements(achievementsResponse.data);
+            } catch (achievementError) {
+                console.log('Could not load achievements:', achievementError);
+                setAchievements([]);
+            }
+            
             setError(null);
-            navigate(`/profile/${response.data.id}`); // Navigate to profile page
+            
+            // Om sökningen lyckas, visa resultatet men navigera inte automatiskt
+            // Användaren kan klicka på resultatet för att gå till profilen
         } catch (error) {
             setError(error.response?.data?.error || "User not found");
             setUserData(null);
+            setAchievements([]);
         } finally {
             setIsLoading(false);
         }
+    };
+
+    // Function to handle click on user profile
+    const handleProfileClick = (userId) => {
+        navigate(`/profile/${userId}`);
     };
 
     // What gets displayed in the browser
@@ -86,9 +108,26 @@ function UserSearch() {
 
             {/* If user data is available, display it */}
             {userData && (
-                <div className="user-profile">
+                <div className="user-profile" 
+                    onClick={() => handleProfileClick(userData.id)}
+                    style={{ cursor: 'pointer' }}
+                >
                     <p>ID: {userData.id}</p>
                     <p>Username: {userData.username}</p>
+                    
+                    {/* Visa bara achievements om det finns några */}
+                    {achievements && achievements.length > 0 && (
+                        <div className="user-achievements">
+                            <h3>Achievements</h3>
+                            <ul>
+                                {achievements.map(achievement => (
+                                    <li key={achievement.id}>
+                                        {achievement.name}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
