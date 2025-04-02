@@ -1,3 +1,4 @@
+
 import axiosInstance from "./axiosInstance";
 
 // Uploads image to /api/images/upload which returns an Imgur URL

@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../services/axiosInstance';
+import { login } from '../services/authApi';
 import '../styles/Dashboard.css';
+
+import { getAllEntries, createEntry, updateEntry, deleteEntry } from '../services/journalApi';
 
 import StatsOverview from '../components/dashboard/StatsOverview';
 import ClimbsList from '../components/dashboard/ClimbsList';
@@ -153,6 +157,7 @@ function Dashboard() {
             </div>
         </div>
     );
+
 }
 
 export default Dashboard;

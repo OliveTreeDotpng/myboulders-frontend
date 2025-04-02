@@ -1,42 +1,46 @@
 import React from 'react';
 
-function GoalCard({ goal, onComplete, onEdit, onDelete, isCompleted }) {
+function GoalCard({ goal, onComplete, onEdit, onDelete }) {
+  const formatDate = (dateString) => {
+    if (!dateString) return 'No date';
+    return new Date(dateString).toLocaleDateString();
+  };
+  
   return (
-    <div className={`goal-card ${isCompleted ? 'completed' : ''}`}>
+    <div className={`goal-card ${goal.completed ? 'completed' : ''}`}>
       <div className="goal-header">
         <h3>{goal.title}</h3>
-        {isCompleted ? (
+        {goal.completed ? (
           <span className="completed-badge">COMPLETED</span>
         ) : (
-          <span className="target-date">Target: {new Date(goal.target_date).toLocaleDateString()}</span>
+          <span className="target-date">Due: {formatDate(goal.target_date)}</span>
         )}
       </div>
-      {goal.description && <p className="goal-description">{goal.description}</p>}
+      
+      {goal.description && (
+        <p className="goal-description">{goal.description}</p>
+      )}
+      
       <div className="goal-actions">
-        {!isCompleted && (
+        {!goal.completed && (
           <button 
-            className="icon-button complete-button" 
-            title="Mark as Complete"
+            className="action-button view-button" 
             onClick={() => onComplete(goal.id)}
           >
-            <span className="material-icons">check_circle</span>
+            Complete
           </button>
         )}
-        {!isCompleted && (
-          <button
-            className="icon-button edit-button"
-            onClick={() => onEdit(goal)}
-            title="Edit goal"
-          >
-            <span className="material-icons">edit</span>
-          </button>
-        )}
-        <button
-          className="icon-button delete-button"
-          onClick={onDelete}
-          title="Delete goal"
+        <button 
+          className="action-button edit-button" 
+          onClick={() => onEdit(goal)}
         >
-          <span className="material-icons">delete</span>
+          Edit
+        </button>
+        <button 
+          className="action-button delete-button" 
+          onClick={() => onDelete(goal.id, goal.completed)}
+        >
+          Delete
         </button>
       </div>
     </div>
