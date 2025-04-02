@@ -9,6 +9,7 @@ import Register from './pages/Register'
 import UserSearch from './pages/UserSearch'
 import UserProfile from './pages/UserProfile'
 import Dashboard from './pages/Dashboard'  // Add this import
+import Leaderboard from './pages/Leaderboard'
 
 function App() {
   const [showStyleGuide, setShowStyleGuide] = useState(false)
@@ -37,6 +38,7 @@ function App() {
         <Route path="/search" element={<UserSearch />} />
         <Route path="/profile/:id" element={<UserProfile />} />
         <Route path="/dashboard" element={<Dashboard />} />  {/* Add this route */}
+        <Route path="/leaderboard" element={<Leaderboard />} />
       </Routes>
     </Router>
   )
