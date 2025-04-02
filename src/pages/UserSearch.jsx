@@ -4,9 +4,6 @@ import { useState } from "react";
 // Import axios instance to make HTTP requests to your backend
 import axiosInstance from "../services/axiosInstance";
 
-// Import a reusable Button component (adjust the path if needed)
-import Button from "../components/Button";
-
 // Import useNavigate hook from react-router-dom for navigation
 import { useNavigate } from 'react-router-dom';
 
@@ -56,6 +53,9 @@ function UserSearch() {
     // What gets displayed in the browser
     return (
         <div className="user-search-container">
+            <h2>Find Users</h2>
+            <p>Search for other climbers by username or ID</p>
+            
             {/* Input field where user types in a username */}
             <input
                 type="text"
@@ -69,23 +69,26 @@ function UserSearch() {
                 aria-invalid={error ? "true" : "false"}
             />
 
-            {/* Reusable button component for the search action */}
-            <Button 
+            {/* Button for the search action */}
+            <button 
                 onClick={handleSearch} 
                 disabled={isLoading}
+                className="button"
             >
                 {isLoading ? "Searching..." : "Search"}
-            </Button>
+            </button>
 
             {/* If there's an error, show it */}
             {error && <p className="error-text">{error}</p>}
+
+            {/* If loading, show searching message */}
+            {isLoading && <p>Searching...</p>}
 
             {/* If user data is available, display it */}
             {userData && (
                 <div className="user-profile">
                     <p>ID: {userData.id}</p>
                     <p>Username: {userData.username}</p>
-                    <p>Password (hashed): {userData.password_hash}</p>
                 </div>
             )}
         </div>
