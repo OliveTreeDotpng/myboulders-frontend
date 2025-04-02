@@ -3,9 +3,12 @@ import { uploadImage } from '../../services/imageApi';
 
 function ClimbForm({ climb, onSave, onCancel }) {
   const [formData, setFormData] = useState({
-    grade: '',     // New field for climbing grade
+    route_type: 'boulder', // Default route type
+    difficulty: '',     // Required field for backend
     flash: false,
     image_url: '',
+    location: '',
+    description: '',
     date: new Date().toISOString().split('T')[0]
   });
   
@@ -25,12 +28,17 @@ function ClimbForm({ climb, onSave, onCancel }) {
     '8A', '8A+', '8B', '8B+', '8C', '8C+'
   ];
 
+  const routeTypes = ['boulder', 'sport', 'trad']; // Available route types
+
   useEffect(() => {
     if (climb) {
       // Format date properly if it exists
       const formattedClimb = {
         ...climb,
-        grade: climb.difficulty || '', // Use the difficulty field as grade if available
+        route_type: climb.route_type || 'boulder',
+        difficulty: climb.difficulty || '', // Map difficulty for the form
+        location: climb.location || '',
+        description: climb.description || '',
         date: climb.date ? new Date(climb.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
       };
       setFormData(formattedClimb);
@@ -78,6 +86,12 @@ function ClimbForm({ climb, onSave, onCancel }) {
     e.preventDefault();
     
     try {
+      // Validate required fields
+      if (!formData.route_type || !formData.difficulty) {
+        alert("Route type and difficulty are required");
+        return;
+      }
+
       // First, upload any image if selected
       let imageUrl = formData.image_url;
       if (imageFile) {
@@ -85,23 +99,14 @@ function ClimbForm({ climb, onSave, onCancel }) {
         try {
           const uploadResult = await uploadImage(imageFile);
           
-          // Add console.log to debug the response structure
           console.log("Upload result:", uploadResult);
           
-          // Check different possible response structures
           if (uploadResult?.url) {
             imageUrl = uploadResult.url;
           } else if (uploadResult?.image_url) {
             imageUrl = uploadResult.image_url;
           } else if (typeof uploadResult === 'string') {
             imageUrl = uploadResult;
-          } else {
-            console.error("Unexpected upload response format:", uploadResult);
-            setUploadStatus({ 
-              uploading: false, 
-              error: "Server returned an invalid response format"
-            });
-            return;
           }
           
           setUploadStatus({ uploading: false, error: null });
@@ -110,23 +115,22 @@ function ClimbForm({ climb, onSave, onCancel }) {
             uploading: false, 
             error: error.message || "Failed to upload image"
           });
-          return; // Stop the submission if image upload fails
+          return; // Stop submission if image upload fails
         }
       }
 
-      // Generate a unique route_id based on selected grade (this is a simplification)
-      // In a real app, you might have a proper routes database to select from
-      const routeId = formData.route_id || `${formData.grade}-${Date.now()}`;
-      
-      // Format the data for submission with the image URL from upload
+      // Format the data correctly for backend API
       const submitData = {
-        ...formData,
-        route_id: routeId,
-        difficulty: formData.grade, // Add the grade as the difficulty
-        image_url: imageUrl,
-        date: new Date(formData.date).toISOString()
+        route_type: formData.route_type,
+        difficulty: formData.difficulty,  // Make sure this field is included
+        location: formData.location || null,
+        description: formData.description || null,
+        flash: formData.flash || false,
+        image_url: imageUrl || null,
+        date: formData.date ? new Date(formData.date).toISOString() : null
       };
 
+      console.log("Submitting journal entry:", submitData);
       onSave(submitData);
     } catch (err) {
       console.error("Error submitting form:", err);
@@ -135,13 +139,30 @@ function ClimbForm({ climb, onSave, onCancel }) {
 
   return (
     <form className="form" onSubmit={handleSubmit}>
-      {/* Grade selection dropdown instead of route ID */}
       <div className="form-group">
-        <label htmlFor="grade">Climbing Grade</label>
+        <label htmlFor="route-type">Route Type</label>
         <select
-          id="grade"
-          name="grade"
-          value={formData.grade}
+          id="route-type"
+          name="route_type"
+          value={formData.route_type}
+          onChange={handleChange}
+          required
+          className="input"
+        >
+          {routeTypes.map((type) => (
+            <option key={type} value={type}>
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="difficulty">Difficulty</label>
+        <select
+          id="difficulty"
+          name="difficulty"
+          value={formData.difficulty}
           onChange={handleChange}
           required
           className="input"
@@ -153,6 +174,31 @@ function ClimbForm({ climb, onSave, onCancel }) {
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="location">Location</label>
+        <input
+          type="text"
+          id="location"
+          name="location"
+          value={formData.location}
+          onChange={handleChange}
+          className="input"
+          placeholder="Where did you climb it?"
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="description">Description</label>
+        <textarea
+          id="description"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          className="input"
+          placeholder="Notes about the climb"
+        />
       </div>
       
       <div className="form-group checkbox-group">
@@ -179,7 +225,6 @@ function ClimbForm({ climb, onSave, onCancel }) {
         />
       </div>
       
-      {/* Image upload section */}
       <div className="form-group">
         <label htmlFor="image-upload">Image Upload</label>
         <input
@@ -191,21 +236,6 @@ function ClimbForm({ climb, onSave, onCancel }) {
           ref={fileInputRef}
         />
         
-        {/* Still allow URL input as fallback */}
-        <label htmlFor="image-url" className="secondary-label">
-          Or enter image URL (optional)
-        </label>
-        <input
-          type="text"
-          id="image-url"
-          name="image_url"
-          value={formData.image_url || ''}
-          onChange={handleChange}
-          className="input"
-          placeholder="https://example.com/image.jpg"
-        />
-        
-        {/* Show image preview if available */}
         {previewImage && (
           <div className="image-preview-container">
             <img 
@@ -215,7 +245,7 @@ function ClimbForm({ climb, onSave, onCancel }) {
             />
             <button 
               type="button" 
-              className="button button-small button-danger" 
+              className="button button-small" 
               onClick={handleClearImage}
             >
               Clear Image
@@ -223,7 +253,6 @@ function ClimbForm({ climb, onSave, onCancel }) {
           </div>
         )}
         
-        {/* Show upload status/errors */}
         {uploadStatus.uploading && <p>Uploading image...</p>}
         {uploadStatus.error && (
           <p className="error-text">{uploadStatus.error}</p>

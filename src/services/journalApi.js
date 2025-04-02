@@ -17,7 +17,10 @@ export const getAllEntries = async () => {
 /**
  * Create a new journal entry
  * @param {Object} entryData Data for the new journal entry
- * @param {number} entryData.route_id ID of the route completed
+ * @param {string} entryData.route_type Type of route (boulder, sport, trad)
+ * @param {string} entryData.difficulty Difficulty grade of the route
+ * @param {string} entryData.location Location of the climb (optional)
+ * @param {string} entryData.description Description of the climb (optional)
  * @param {boolean} entryData.flash Whether the route was completed as a flash
  * @param {string} entryData.image_url URL to an image (optional)
  * @param {string} entryData.date ISO format date (optional)
@@ -25,11 +28,12 @@ export const getAllEntries = async () => {
  */
 export const createEntry = async (entryData) => {
   try {
+    console.log("Creating journal entry with data:", entryData);
     const response = await axiosInstance.post('/journal/post', entryData);
-    return response.data.entry;
+    return response.data;
   } catch (error) {
-    console.error('Error creating journal entry:', error);
-    throw new Error(error?.response?.data?.error || 'Failed to create journal entry');
+    console.error("Error creating journal entry:", error.response?.data || error.message);
+    throw error;
   }
 };
 

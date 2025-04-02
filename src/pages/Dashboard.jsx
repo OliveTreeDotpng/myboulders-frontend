@@ -101,18 +101,24 @@ function Dashboard() {
   // Rest of the component remains the same
   const handleSaveClimb = async (climbData) => {
     try {
-      let savedClimb;
-      if (climbData.id) {
-        savedClimb = await updateEntry(climbData.id, climbData);
-        setCompletedClimbs(completedClimbs.map(climb => 
-          climb.id === climbData.id ? savedClimb : climb
-        ));
-      } else {
-        savedClimb = await createEntry(climbData);
-        setCompletedClimbs([...completedClimbs, savedClimb]);
+      // Make sure climbData has both route_type AND difficulty fields
+      if (!climbData.route_type || !climbData.difficulty) {
+        console.error("Missing required fields for journal entry");
+        return;
       }
-    } catch (err) {
-      console.error('Failed to save climb:', err);
+      
+      console.log("Saving climb with data:", climbData);
+      const savedEntry = await createEntry(climbData);
+      
+      // Refresh entries list
+      fetchJournalEntries();
+      
+      // Reset form or close modal as needed
+      // ...
+      
+    } catch (error) {
+      console.error("Failed to save climb:", error);
+      // Show error to user
     }
   };
 
