@@ -1,0 +1,267 @@
+/* Dashboard Styles */
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+
+.dashboard-header {
+  margin-bottom: var(--space-5);
+}
+
+.dashboard-header h1 {
+  color: var(--color-text-primary);
+}
+
+.welcome-message {
+  color: var(--color-text-secondary);
+  font-size: 1.1rem;
+}
+
+/* Stats Section */
+.stats-overview {
+  margin-bottom: var(--space-5);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.stat-card {
+  background-color: var(--color-surface);
+  padding: var(--space-3);
+  border-radius: var(--border-radius-md);
+  text-align: center;
+  box-shadow: var(--box-shadow-sm);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--box-shadow-md);
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1;
+  margin-bottom: var(--space-1);
+}
+
+.stat-label {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+/* Dashboard Content Layout */
+.dashboard-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 768px) {
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Section Styling */
+.climbs-section, .goals-section {
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--box-shadow-sm);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.section-header h2 {
+  margin: 0;
+}
+
+/* Form Styling */
+.form {
+  background-color: var(--color-surface-variant);
+  padding: var(--space-3);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--space-4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.form-group {
+  margin-bottom: var(--space-3);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: var(--color-text-secondary);
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+  margin-right: var(--space-2);
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+/* Entry Cards */
+.entries-list, .goals-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.entry-card, .goal-card {
+  background-color: var(--color-surface-variant);
+  padding: var(--space-3);
+  border-radius: var(--border-radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+
+.entry-header, .goal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.entry-header h3, .goal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.flash-badge {
+  background-color: var(--color-accent);
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: var(--border-radius-sm);
+}
+
+.completed-badge {
+  background-color: var(--color-success);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: var(--border-radius-sm);
+}
+
+.target-date {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.entry-details, .goal-description {
+  margin-bottom: var(--space-3);
+  color: var(--color-text-secondary);
+}
+
+.date {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.notes {
+  margin-top: var(--space-2);
+}
+
+.entry-actions, .goal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+/* Completed goals styling */
+.goal-card.completed {
+  background-color: var(--color-surface);
+  opacity: 0.8;
+}
+
+/* Button styles */
+.icon-button {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--border-radius-round);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.edit-button:hover {
+  color: var(--color-info);
+}
+
+.delete-button:hover {
+  color: var(--color-error);
+}
+
+.complete-button:hover {
+  color: var(--color-success);
+}
+
+/* Material Icons style placeholder - you would need to import these */
+.material-icons {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* Empty state messages */
+.empty-state {
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: var(--space-4);
+}
+
+/* Loading state */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  color: var(--color-text-secondary);
+  font-size: 1.2rem;
+}
+
+/* Error message */
+.error-message {
+  background-color: rgba(207, 102, 121, 0.1);
+  color: var(--color-error);
+  padding: var(--space-3);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--space-4);
+}
