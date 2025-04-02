@@ -107,13 +107,26 @@ function Dashboard() {
       }
       
       console.log("Saving climb with data:", climbData);
-      const savedEntry = await createEntry(climbData);
       
-      // Refresh entries list
-      fetchJournalEntries();
-      
-      // Reset form or close modal as needed
-      // ...
+      let savedEntry;
+      if (climbData.id) {
+        // Update existing entry - make sure to pass difficulty
+        savedEntry = await updateEntry(climbData.id, climbData);
+        console.log("Updated entry:", savedEntry);
+        
+        // Update the entry in the local state
+        setCompletedClimbs(prev => 
+          prev.map(climb => climb.id === climbData.id ? savedEntry : climb)
+        );
+        
+        // Also refresh entries from server to ensure consistency
+        fetchJournalEntries();
+      } else {
+        // Create new entry
+        savedEntry = await createEntry(climbData);
+        // Add the new entry to the local state
+        setCompletedClimbs(prev => [...prev, savedEntry]);
+      }
       
     } catch (error) {
       console.error("Failed to save climb:", error);
