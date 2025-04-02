@@ -3,12 +3,10 @@ import { uploadImage } from '../../services/imageApi';
 
 function ClimbForm({ climb, onSave, onCancel }) {
   const [formData, setFormData] = useState({
-    route_type: 'boulder', // Default route type
-    difficulty: '',     // Required field for backend
+    route_type: 'boulder', // Still needed for backend
+    difficulty: '',        // Still needed for backend
     flash: false,
     image_url: '',
-    location: '',
-    description: '',
     date: new Date().toISOString().split('T')[0]
   });
   
@@ -36,9 +34,9 @@ function ClimbForm({ climb, onSave, onCancel }) {
       const formattedClimb = {
         ...climb,
         route_type: climb.route_type || 'boulder',
-        difficulty: climb.difficulty || '', // Map difficulty for the form
-        location: climb.location || '',
-        description: climb.description || '',
+        difficulty: climb.difficulty || '',
+        flash: climb.flash || false,
+        image_url: climb.image_url || '',
         date: climb.date ? new Date(climb.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
       };
       setFormData(formattedClimb);
@@ -119,12 +117,10 @@ function ClimbForm({ climb, onSave, onCancel }) {
         }
       }
 
-      // Format the data correctly for backend API
+      // Format the data for backend API
       const submitData = {
         route_type: formData.route_type,
-        difficulty: formData.difficulty,  // Make sure this field is included
-        location: formData.location || null,
-        description: formData.description || null,
+        difficulty: formData.difficulty,
         flash: formData.flash || false,
         image_url: imageUrl || null,
         date: formData.date ? new Date(formData.date).toISOString() : null
@@ -174,31 +170,6 @@ function ClimbForm({ climb, onSave, onCancel }) {
             </option>
           ))}
         </select>
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="location">Location</label>
-        <input
-          type="text"
-          id="location"
-          name="location"
-          value={formData.location}
-          onChange={handleChange}
-          className="input"
-          placeholder="Where did you climb it?"
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="description">Description</label>
-        <textarea
-          id="description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          className="input"
-          placeholder="Notes about the climb"
-        />
       </div>
       
       <div className="form-group checkbox-group">

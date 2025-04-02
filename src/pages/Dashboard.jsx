@@ -78,18 +78,17 @@ function Dashboard() {
 
     const fetchGoals = async () => {
       try {
-        // These would be separate API calls in a real implementation
-        // For now using mock data
-        setCurrentGoals([
-          { id: 1, title: 'Complete 5 V3 routes', description: 'Push my limits on V3 difficulty', target_date: '2025-05-01', completed: false },
-          { id: 2, title: 'Master the dyno technique', description: 'Practice dynamic movements on the wall', target_date: '2025-06-15', completed: false }
-        ]);
+        // Replace mock data with actual API call
+        const currentResponse = await axiosInstance.get('/goals/current');
+        setCurrentGoals(currentResponse.data.goals || []);
         
-        setCompletedGoals([
-          { id: 3, title: 'Climb twice a week', description: 'Build consistent training habit', target_date: '2025-03-15', completed: true },
-        ]);
+        const completedResponse = await axiosInstance.get('/goals/completed');
+        setCompletedGoals(completedResponse.data.goals || []);
       } catch (err) {
         console.error('Failed to fetch goals:', err);
+        // Fallback to empty arrays on error
+        setCurrentGoals([]);
+        setCompletedGoals([]);
       }
     };
 

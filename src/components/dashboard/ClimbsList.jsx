@@ -3,57 +3,76 @@ import ClimbCard from './ClimbCard';
 import ClimbForm from './ClimbForm';
 
 function ClimbsList({ climbs, onSaveClimb, onDeleteClimb }) {
-  const [showForm, setShowForm] = useState(false);
-  const [climbToEdit, setClimbToEdit] = useState(null);
-
-  const handleSave = (climbData) => {
-    onSaveClimb(climbData);
-    setShowForm(false);
-    setClimbToEdit(null);
+  const [isAddingClimb, setIsAddingClimb] = useState(false);
+  const [editingClimb, setEditingClimb] = useState(null);
+  
+  const handleAddClick = () => {
+    setIsAddingClimb(true);
+    setEditingClimb(null);
   };
-
-  const handleEdit = (climb) => {
-    setClimbToEdit(climb);
-    setShowForm(true);
+  
+  const handleEditClick = (climb) => {
+    setEditingClimb(climb);
+    setIsAddingClimb(false);
   };
-
-  const handleCancel = () => {
-    setShowForm(false);
-    setClimbToEdit(null);
+  
+  const handleCancelForm = () => {
+    setIsAddingClimb(false);
+    setEditingClimb(null);
+  };
+  
+  const handleSaveClimb = (climbData) => {
+    onSaveClimb(editingClimb ? { ...climbData, id: editingClimb.id } : climbData);
+    setIsAddingClimb(false);
+    setEditingClimb(null);
   };
 
   return (
-    <section className="climbs-section">
-      <div className="section-header">
-        <h2>Completed Climbs</h2>
+    <section className="climbs-section dashboard-section">
+      <header className="section-header">
+        <h2>My Completed Climbs</h2>
         <button 
           className="button button-primary" 
-          onClick={() => setShowForm(!showForm)}
+          onClick={handleAddClick}
+          disabled={isAddingClimb || editingClimb}
         >
-          {showForm ? 'Cancel' : 'Log Completed Climb'}
+          Log New Climb
         </button>
-      </div>
+      </header>
       
-      {showForm && (
-        <ClimbForm 
-          climb={climbToEdit}
-          onSave={handleSave}
-          onCancel={handleCancel}
-        />
+      {isAddingClimb && (
+        <div className="form-container">
+          <h3>Log a New Climb</h3>
+          <ClimbForm
+            onSave={handleSaveClimb}
+            onCancel={handleCancelForm}
+          />
+        </div>
       )}
       
-      <div className="entries-list">
-        {climbs.length > 0 ? (
+      {editingClimb && (
+        <div className="form-container">
+          <h3>Edit Climb</h3>
+          <ClimbForm
+            climb={editingClimb}
+            onSave={handleSaveClimb}
+            onCancel={handleCancelForm}
+          />
+        </div>
+      )}
+      
+      <div className="climbs-list">
+        {climbs.length === 0 ? (
+          <p className="empty-state">You haven't logged any climbs yet.</p>
+        ) : (
           climbs.map(climb => (
-            <ClimbCard 
+            <ClimbCard
               key={climb.id}
               climb={climb}
-              onEdit={handleEdit}
+              onEdit={handleEditClick}
               onDelete={onDeleteClimb}
             />
           ))
-        ) : (
-          <p className="empty-state">No climbs logged yet. Start logging your climbs!</p>
         )}
       </div>
     </section>
