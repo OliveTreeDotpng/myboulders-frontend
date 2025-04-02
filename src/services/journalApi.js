@@ -60,7 +60,9 @@ export const getEntry = async (entryId) => {
  */
 export const updateEntry = async (entryId, entryData) => {
   try {
+    console.log(`Updating journal entry ${entryId} with data:`, entryData);
     const response = await axiosInstance.put(`/journal/edit/${entryId}`, entryData);
+    console.log("Update response:", response.data);
     return response.data.entry;
   } catch (error) {
     console.error(`Error updating journal entry ${entryId}:`, error);

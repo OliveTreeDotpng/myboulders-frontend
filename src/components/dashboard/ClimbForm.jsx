@@ -117,10 +117,10 @@ function ClimbForm({ climb, onSave, onCancel }) {
         }
       }
 
-      // Format the data for backend API
+      // Format the data for backend API - make sure to include difficulty for edits
       const submitData = {
         route_type: formData.route_type,
-        difficulty: formData.difficulty,
+        difficulty: formData.difficulty,  // Always include difficulty for both new and edit cases
         flash: formData.flash || false,
         image_url: imageUrl || null,
         date: formData.date ? new Date(formData.date).toISOString() : null
