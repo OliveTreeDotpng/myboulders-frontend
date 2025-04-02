@@ -21,3 +21,21 @@ export const logout = async () => {
     console.error('Error logging out:', error)
   }
 }
+
+
+export const register = async (userData) => {
+  try {
+      const response = await axiosInstance.post(
+          '/auth/register',
+          userData,
+          {
+              // Optional: only needed if backend uses cookies
+              withCredentials: true,
+          }
+      );
+      return response.data;
+  } catch (error) {
+      console.error(" Error registering user:", error);
+      throw error;
+  }
+};
