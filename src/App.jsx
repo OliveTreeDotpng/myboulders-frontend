@@ -11,6 +11,7 @@ import UserProfile from './pages/UserProfile'
 import Dashboard from './pages/Dashboard'  
 import Leaderboard from './pages/Leaderboard'
 import MainLayout from './layouts/MainLayout';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
   const [showStyleGuide, setShowStyleGuide] = useState(false)
@@ -32,15 +33,19 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Publika sidor */}
         <Route path="/" element={<LandingPage onStyleGuideClick={() => setShowStyleGuide(true)} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        <Route element={<MainLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/search" element={<UserSearch />} />
-          <Route path="/profile/:id" element={<UserProfile />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
+        {/* Skyddade sidor - kräver inloggning */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<MainLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/search" element={<UserSearch />} />
+            <Route path="/profile/:id" element={<UserProfile />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+          </Route>
         </Route>
       </Routes>
     </Router>

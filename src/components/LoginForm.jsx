@@ -1,70 +1,76 @@
-import { useState } from "react";
-import { login } from "../services/authApi";
+import React, { useState } from 'react';
 
 function LoginForm({ onLoginSuccess }) {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
-    const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    username: '',
+    password: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
-        try {
-            await login({ username, password });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validation
+    if (!formData.username || !formData.password) {
+      alert('Please enter both username and password');
+      return;
+    }
+    
+    try {
+      setIsSubmitting(true);
+      await onLoginSuccess(formData); // Skicka formdata till parent component
+    } catch (error) {
+      console.error('Login submission error:', error);
+      // Error visas av parent component
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-            // Clear error message
-            setErrorMessage("");
-
-            // Only call the success function if it's provided
-            if (onLoginSuccess) {
-                onLoginSuccess();
-            }
-
-        } catch (error) {
-            // Handle network or server error
-            setErrorMessage(error.message || "Login failed");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <form onSubmit={handleSubmit}>
-            <h2>Log in</h2>
-
-            {errorMessage && (
-                <p style={{ color: "red" }} aria-live="polite">
-                    {errorMessage}
-                </p>
-            )}
-
-            <div>
-                <label>Username:</label>
-                <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                />
-            </div>
-
-            <div>
-                <label>Password:</label>
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-            </div>
-
-            <button type="submit" disabled={loading}>
-                {loading ? "Logging in..." : "Log in"}
-            </button>
-        </form>
-    );
+  return (
+    <form className="auth-form" onSubmit={handleSubmit}>
+      <div className="form-group">
+        <label htmlFor="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          required
+          autoComplete="username"
+          className="input"
+        />
+      </div>
+      
+      <div className="form-group">
+        <label htmlFor="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+          autoComplete="current-password"
+          className="input"
+        />
+      </div>
+      
+      <button 
+        type="submit" 
+        className="button button-primary" 
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? 'Logging in...' : 'Login'}
+      </button>
+    </form>
+  );
 }
 
 export default LoginForm;

@@ -219,3 +219,40 @@ button:active, .button:active {
   color: var(--color-error); /* Error color */
   font-size: 0.875rem; /* Slightly smaller font size */
 }
+
+/* Loading Spinner */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+}
+
+.loading::after {
+  content: '';
+  width: 20px;
+  height: 20px;
+  margin-left: 12px;
+  border: 2px solid var(--color-primary);
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Nice error message styling */
+.error-message {
+  background-color: rgb(253, 237, 237);
+  color: rgb(95, 33, 32);
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+  border: 1px solid rgba(95, 33, 32, 0.2);
+}
