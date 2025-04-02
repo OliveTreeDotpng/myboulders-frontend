@@ -2,41 +2,57 @@ import { useState } from "react";
 import { login } from "../services/authApi";
 
 function LoginForm({ onLoginSuccess }) {
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState(null);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+
         try {
-            await login({ email, password });
+            await login({ username, password });
+
+            // Clear error message
             setErrorMessage("");
-            onLoginSuccess(); // Call the success callback
+
+            // Only call the success function if it's provided
+            if (onLoginSuccess) {
+                onLoginSuccess();
+            }
+
         } catch (error) {
-            setErrorMessage(error.message || "Login failed. Please try again.");
+            // Handle network or server error
+            setErrorMessage(error.message || "Login failed");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <form onSubmit={handleSubmit}>
-            <h2>Login</h2>
+            <h2>Log in</h2>
 
-            {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+            {errorMessage && (
+                <p style={{ color: "red" }} aria-live="polite">
+                    {errorMessage}
+                </p>
+            )}
 
             <div>
-                <label htmlFor="email">Email:</label>
+                <label>Username:</label>
                 <input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     required
                 />
             </div>
+
             <div>
-                <label htmlFor="password">Password:</label>
+                <label>Password:</label>
                 <input
-                    id="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -44,7 +60,9 @@ function LoginForm({ onLoginSuccess }) {
                 />
             </div>
 
-            <button type="submit">Login</button>
+            <button type="submit" disabled={loading}>
+                {loading ? "Logging in..." : "Log in"}
+            </button>
         </form>
     );
 }

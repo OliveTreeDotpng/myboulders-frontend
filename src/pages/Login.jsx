@@ -1,57 +1,21 @@
-import { useState } from "react";
-import { login } from "../services/authApi";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import LoginForm from "../components/LoginForm"; // justera sökvägen om det behövs
 
-function LoginForm({ onLoginSuccess }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+function Login() {
+    const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await login({ username, password });
-      setErrorMessage("");
-      onLoginSuccess(); // Redirect to /dashboard
-    } catch (error) {
-      setErrorMessage(error.message || "Login failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const handleLoginSuccess = () => {
+        // Redirect after successful login
+        navigate("/dashboard");
+    };
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <h2>Logga in</h2>
-
-      {errorMessage && <p style={{ color: "red" }} aria-live="polite">{errorMessage}</p>}
-
-      <div>
-        <label>Username:</label>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-      </div>
-
-      <div>
-        <label>Password:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
-
-      <button type="submit" disabled={loading}>
-        {loading ? "Logging in..." : "Log in"}
-      </button>
-    </form>
-  );
+    return (
+        <div>
+            <h1>Login</h1>
+            <LoginForm onLoginSuccess={handleLoginSuccess} />
+        </div>
+    );
 }
 
-export default LoginForm;
+export default Login;
