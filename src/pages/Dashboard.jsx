@@ -1,12 +1,22 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../services/axiosInstance';
+import { login } from '../services/authApi';
 import '../styles/Dashboard.css';
+
+import { getAllEntries, createEntry, updateEntry, deleteEntry } from '../services/journalApi';
 
 import StatsOverview from '../components/dashboard/StatsOverview';
 import ClimbsList from '../components/dashboard/ClimbsList';
 import GoalsList from '../components/dashboard/GoalsList';
 
 function Dashboard() {
+  const navigate = useNavigate();
+  
+  // State for authentication
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
+  
   // State for user data
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,9 +26,30 @@ function Dashboard() {
   const [completedClimbs, setCompletedClimbs] = useState([]);
   const [currentGoals, setCurrentGoals] = useState([]);
   const [completedGoals, setCompletedGoals] = useState([]);
-  
-  // Fetch user data and statistics on component mount
+
+  // Check authentication first
   useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        setAuthLoading(true);
+        // Try to get a protected resource to check if user is logged in
+        await axiosInstance.get('/auth/check');
+        setIsAuthenticated(true);
+      } catch (err) {
+        console.log('User not authenticated, redirecting to login');
+        navigate('/login');
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, [navigate]);
+  
+  // Fetch data once authenticated
+  useEffect(() => {
+    if (!isAuthenticated || authLoading) return;
+    
     const fetchUserData = async () => {
       try {
         setLoading(true);
@@ -36,59 +67,64 @@ function Dashboard() {
 
     const fetchJournalEntries = async () => {
       try {
-        const response = await axiosInstance.get('/journal/');
-        setCompletedClimbs(response.data);
+        // Use getAllEntries from journalApi service
+        const entries = await getAllEntries();
+        setCompletedClimbs(entries || []);
       } catch (err) {
         console.error('Failed to fetch journal entries:', err);
+        // Don't break the UI if journal entries fail to load
       }
     };
 
     const fetchGoals = async () => {
       try {
-        // These would be separate API calls in a real implementation
-        // For now using mock data
-        setCurrentGoals([
-          { id: 1, title: 'Complete 5 V3 routes', description: 'Push my limits on V3 difficulty', target_date: '2025-05-01', completed: false },
-          { id: 2, title: 'Master the dyno technique', description: 'Practice dynamic movements on the wall', target_date: '2025-06-15', completed: false }
-        ]);
+        // Replace mock data with actual API call
+        const currentResponse = await axiosInstance.get('/goals/current');
+        setCurrentGoals(currentResponse.data.goals || []);
         
-        setCompletedGoals([
-          { id: 3, title: 'Climb twice a week', description: 'Build consistent training habit', target_date: '2025-03-15', completed: true },
-        ]);
+        const completedResponse = await axiosInstance.get('/goals/completed');
+        setCompletedGoals(completedResponse.data.goals || []);
       } catch (err) {
         console.error('Failed to fetch goals:', err);
+        // Fallback to empty arrays on error
+        setCurrentGoals([]);
+        setCompletedGoals([]);
       }
     };
 
     fetchUserData();
     fetchJournalEntries();
     fetchGoals();
-  }, []);
+  }, [isAuthenticated, authLoading, navigate]);
 
-  // Handle saving a climb (new or edited)
+  // Rest of the component remains the same
   const handleSaveClimb = async (climbData) => {
     try {
-      let response;
-      if (climbData.id) {
-        // Update existing climb
-        response = await axiosInstance.put(`/journal/edit/${climbData.id}`, climbData);
-        setCompletedClimbs(completedClimbs.map(climb => 
-          climb.id === climbData.id ? response.data : climb
-        ));
-      } else {
-        // Create new climb
-        response = await axiosInstance.post('/journal/post', climbData);
-        setCompletedClimbs([...completedClimbs, response.data]);
+      // Make sure climbData has both route_type AND difficulty fields
+      if (!climbData.route_type || !climbData.difficulty) {
+        console.error("Missing required fields for journal entry");
+        return;
       }
-    } catch (err) {
-      console.error('Failed to save climb:', err);
+      
+      console.log("Saving climb with data:", climbData);
+      const savedEntry = await createEntry(climbData);
+      
+      // Refresh entries list
+      fetchJournalEntries();
+      
+      // Reset form or close modal as needed
+      // ...
+      
+    } catch (error) {
+      console.error("Failed to save climb:", error);
+      // Show error to user
     }
   };
 
   // Handle deleting a climb
   const handleDeleteClimb = async (id) => {
     try {
-      await axiosInstance.delete(`/journal/edit/${id}`);
+      await deleteEntry(id);
       setCompletedClimbs(completedClimbs.filter(climb => climb.id !== id));
     } catch (err) {
       console.error('Failed to delete climb:', err);
@@ -134,7 +170,7 @@ function Dashboard() {
     }
   };
 
-  if (loading) return <div className="loading">Loading dashboard...</div>;
+  if (authLoading || loading) return <div className="loading">Loading dashboard...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
   return (
