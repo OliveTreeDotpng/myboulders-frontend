@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { login } from "../services/authApi";
+import Button from "./Button";
 
 function LoginForm({ onLoginSuccess }) {
     const [username, setUsername] = useState("");
@@ -13,17 +14,11 @@ function LoginForm({ onLoginSuccess }) {
 
         try {
             await login({ username, password });
-
-            // Clear error message
             setErrorMessage("");
-
-            // Only call the success function if it's provided
             if (onLoginSuccess) {
                 onLoginSuccess();
             }
-
         } catch (error) {
-            // Handle network or server error
             setErrorMessage(error.message || "Login failed");
         } finally {
             setLoading(false);
@@ -31,39 +26,50 @@ function LoginForm({ onLoginSuccess }) {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Log in</h2>
+        <div className="auth-container">
+            <form className="auth-form" onSubmit={handleSubmit}>
+                <h2>Welcome Back</h2>
+                
+                {errorMessage && (
+                    <p className="error-text" aria-live="polite">
+                        {errorMessage}
+                    </p>
+                )}
 
-            {errorMessage && (
-                <p style={{ color: "red" }} aria-live="polite">
-                    {errorMessage}
-                </p>
-            )}
+                <div className="form-group">
+                    <label htmlFor="username">Username</label>
+                    <input
+                        id="username"
+                        type="text"
+                        className="input"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
+                </div>
 
-            <div>
-                <label>Username:</label>
-                <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                />
-            </div>
+                <div className="form-group">
+                    <label htmlFor="password">Password</label>
+                    <input
+                        id="password"
+                        type="password"
+                        className="input"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                </div>
 
-            <div>
-                <label>Password:</label>
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-            </div>
-
-            <button type="submit" disabled={loading}>
-                {loading ? "Logging in..." : "Log in"}
-            </button>
-        </form>
+                <Button
+                    type="submit"
+                    variant="primary"
+                    disabled={loading}
+                    className="auth-button"
+                >
+                    {loading ? "Logging in..." : "Log in"}
+                </Button>
+            </form>
+        </div>
     );
 }
 
