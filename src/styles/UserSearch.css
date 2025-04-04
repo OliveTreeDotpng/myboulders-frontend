@@ -81,6 +81,15 @@ Includes layout, input field, error messages, and profile card styling.
     margin-bottom: 0;
 }
 
+.user-profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .user-achievements {
     margin-top: var(--space-3);
     padding-top: var(--space-3);
@@ -111,4 +120,34 @@ Includes layout, input field, error messages, and profile card styling.
     font-style: italic;
     font-size: 0.9rem;
     margin: var(--space-2) 0;
+}
+
+.user-info h3 {
+    font-size: 1.2rem;
+    margin: 0 0 var(--space-1) 0;
+    color: var(--color-text-primary);
+}
+
+.user-id {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+
+.achievements-list {
+    margin: var(--space-2) 0 0 0;
+    padding: 0;
+}
+
+.achievement-item {
+    background-color: var(--color-surface);
+    padding: var(--space-2) var(--space-3);
+    margin-bottom: var(--space-2);
+    border-radius: var(--border-radius-md);
+    font-size: 0.9rem;
+    transition: background-color var(--transition-normal);
+}
+
+.achievement-item:hover {
+    background-color: var(--color-surface-variant);
 }

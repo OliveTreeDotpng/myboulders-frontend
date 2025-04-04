@@ -10,6 +10,9 @@ import { useNavigate } from 'react-router-dom';
 // Import the new CSS file
 import '../styles/UserSearch.css';
 
+// Import the SearchResult component
+import SearchResult from './SearchResult';
+
 function UserSearch() {
     // username = the input from the user
     // setUsername = function to update the username state
@@ -112,27 +115,11 @@ function UserSearch() {
 
             {/* If user data is available, display it */}
             {userData && (
-                <div className="user-profile" 
-                    onClick={() => handleProfileClick(userData.id)}
-                    style={{ cursor: 'pointer' }}
-                >
-                    <p>ID: {userData.id}</p>
-                    <p>Username: {userData.username}</p>
-                    
-                    {/* Visa bara achievements om det finns några */}
-                    {achievements && achievements.length > 0 && (
-                        <div className="user-achievements">
-                            <h3>Achievements</h3>
-                            <ul>
-                                {achievements.map(achievement => (
-                                    <li key={achievement.id}>
-                                        {achievement.name}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-                </div>
+                <SearchResult 
+                    userData={userData}
+                    achievements={achievements}
+                    onProfileClick={handleProfileClick}
+                />
             )}
         </div>
     );

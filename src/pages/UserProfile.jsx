@@ -2,6 +2,7 @@
 import { useParams } from 'react-router-dom'; // useParams is a hook that lets you access URL parameters
 import { useState, useEffect } from 'react'; // React hooks for storing data in state (useState) and running side effects like API calls (useEffect)
 import axiosInstance from '../services/axiosInstance'; // backend API instance
+import { followUser, unfollowUser } from '../services/userApi'; // API functions for follow/unfollow actions
 
 function UserProfile() {
     const { id } = useParams();
@@ -9,6 +10,8 @@ function UserProfile() {
     const [achievements, setAchievements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isFollowing, setIsFollowing] = useState(false);
+    const [followLoading, setFollowLoading] = useState(false);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -37,13 +40,39 @@ function UserProfile() {
         fetchProfile();
     }, [id]);
 
+    const handleFollow = async () => {
+        setFollowLoading(true);
+        try {
+            if (isFollowing) {
+                await unfollowUser(id);
+                setIsFollowing(false);
+            } else {
+                await followUser(id);
+                setIsFollowing(true);
+            }
+        } catch (error) {
+            console.error('Failed to follow/unfollow:', error);
+        } finally {
+            setFollowLoading(false);
+        }
+    };
+
     if (loading) return <div>Loading profile...</div>;
     if (error) return <div className="error-text">{error}</div>;
     if (!profileData) return <div>No profile data found</div>;
 
     return (
         <div className="profile-container">
-            <h2>{profileData.username}'s Profile</h2>
+            <div className="profile-header">
+                <h2>{profileData.username}'s Profile</h2>
+                <button
+                    onClick={handleFollow}
+                    disabled={followLoading}
+                    className={`button ${isFollowing ? 'button-secondary' : 'button-primary'}`}
+                >
+                    {followLoading ? "..." : isFollowing ? "Unfollow" : "Follow"}
+                </button>
+            </div>
             <div className="profile-details">
                 <p>User ID: {profileData.id}</p>
                 <p>Username: {profileData.username}</p>

@@ -1,0 +1,32 @@
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-4);
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-header h2 {
+    margin: 0;
+}
+
+/* Follow button styles */
+.profile-header .button {
+    font-size: 0.8rem;
+    padding: calc(var(--space-2) * 0.8) calc(var(--space-3) * 0.8);  
+    min-width: calc(100px * 0.8);  
+}
+
+.profile-details {
+    background-color: var(--color-surface);
+    padding: var(--space-4);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--box-shadow-md);
+}
