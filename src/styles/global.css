@@ -250,6 +250,16 @@ button:active, .button:active {
   border: 1px solid rgba(95, 33, 32, 0.2);
 }
 
+/* Success Message (Generic) */
+.success-message {
+  background-color: rgb(230, 255, 236);
+  color: rgb(10, 78, 36);
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+  border: 1px solid rgba(10, 78, 36, 0.2);
+}
+
 /* Auth Form Layout */
 .auth-container {
   min-height: 100vh;
