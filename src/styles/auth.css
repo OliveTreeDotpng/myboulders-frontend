@@ -1,0 +1,140 @@
+/* Auth-specific styles that won't conflict with global.css */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: var(--color-background);
+}
+
+.auth-card {
+  background-color: var(--color-surface);
+  border-radius: 8px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.auth-card h1 {
+  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.auth-subtitle {
+  color: var(--color-text-secondary);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background-color: transparent;
+  padding: 0;
+  box-shadow: none;
+  max-width: none;
+  border: none;
+  width: 100%;
+}
+
+.auth-form .form-group {
+  margin-bottom: 0;
+}
+
+.auth-form .input {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: var(--color-surface-variant);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-md);
+  color: var(--color-text-primary);
+  font-size: 1rem;
+}
+
+.auth-form .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.auth-links {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.auth-links a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.auth-links a:hover {
+  text-decoration: underline;
+}
+
+.error-message {
+  background-color: rgba(207, 102, 121, 0.1);
+  color: var(--color-error);
+  padding: 0.75rem;
+  border-radius: var(--border-radius-md);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.success-message {
+  background-color: rgba(101, 179, 105, 0.1);
+  color: var(--color-success);
+  padding: 0.75rem;
+  border-radius: var(--border-radius-md);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.upload-status {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.image-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.image-preview {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-primary);
+}
+
+/* Override button styles to prevent conflicts */
+.auth-form .button {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.auth-form .button-small {
+  width: auto;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 1.5rem;
+  }
+  
+  .auth-card h1 {
+    font-size: 1.5rem;
+  }
+}

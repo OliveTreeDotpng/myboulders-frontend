@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
 import { login } from "../services/authApi";
+import "../styles/auth.css"; // Import the auth-specific styles
 
 function Login() {
     const navigate = useNavigate();
@@ -27,7 +28,7 @@ function Login() {
             navigate(from, { replace: true });
         } catch (error) {
             console.error("Login failed:", error);
-            setLoginError(error.response?.data?.error || "Inloggning misslyckades");
+            setLoginError(error.response?.data?.error || "Login failed. Please check your credentials.");
         }
     };
 
