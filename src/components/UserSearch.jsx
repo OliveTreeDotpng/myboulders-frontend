@@ -67,8 +67,12 @@ function UserSearch() {
         }
     };
 
-    // Function to handle click on user profile
+    // Updated handleProfileClick function
     const handleProfileClick = (userId) => {
+        // Clear search results and input when navigating to profile
+        setUsername("");
+        setUserData(null);
+        setAchievements([]);
         navigate(`/profile/${userId}`);
     };
 

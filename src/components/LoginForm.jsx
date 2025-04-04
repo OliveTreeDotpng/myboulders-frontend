@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { login } from "../services/authApi";
+import Button from "./Button";
 
 function LoginForm({ onLoginSuccess }) {
   const [formData, setFormData] = useState({
@@ -6,6 +8,7 @@ function LoginForm({ onLoginSuccess }) {
     password: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -14,62 +17,78 @@ function LoginForm({ onLoginSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validation
-    if (!formData.username || !formData.password) {
+
+    const { username, password } = formData;
+
+    if (!username || !password) {
       alert('Please enter both username and password');
       return;
     }
-    
+
     try {
       setIsSubmitting(true);
-      await onLoginSuccess(formData); // Skicka formdata till parent component
+      await login({ username, password });
+      setErrorMessage("");
+      if (onLoginSuccess) {
+        onLoginSuccess(formData);
+      }
     } catch (error) {
-      console.error('Login submission error:', error);
-      // Error visas av parent component
+      console.error('Login error:', error);
+      setErrorMessage(error.message || 'Login failed');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <form className="auth-form" onSubmit={handleSubmit}>
-      <div className="form-group">
-        <label htmlFor="username">Username</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          required
-          autoComplete="username"
-          className="input"
-        />
-      </div>
-      
-      <div className="form-group">
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-          autoComplete="current-password"
-          className="input"
-        />
-      </div>
-      
-      <button 
-        type="submit" 
-        className="button button-primary" 
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? 'Logging in...' : 'Login'}
-      </button>
-    </form>
+    <div className="auth-container">
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <h2>Welcome Back</h2>
+
+        {errorMessage && (
+          <p className="error-text" aria-live="polite">
+            {errorMessage}
+          </p>
+        )}
+
+        <div className="form-group">
+          <label htmlFor="username">Username</label>
+          <input
+            id="username"
+            type="text"
+            name="username"
+            className="input"
+            value={formData.username}
+            onChange={handleChange}
+            required
+            autoComplete="username"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            name="password"
+            className="input"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            autoComplete="current-password"
+          />
+        </div>
+
+        <Button
+          type="submit"
+          variant="primary"
+          disabled={isSubmitting}
+          className="auth-button"
+        >
+          {isSubmitting ? "Logging in..." : "Log in"}
+        </Button>
+      </form>
+    </div>
   );
 }
 
