@@ -53,9 +53,8 @@ function Dashboard() {
     const fetchUserData = async () => {
       try {
         setLoading(true);
-        // In a real implementation, this would be the currently logged-in user
-        const userId = 1; // Placeholder - replace with actual user ID from auth context
-        const response = await axiosInstance.get(`/users/search?user_id=${userId}`);
+        // Get the current user's data from the auth/me endpoint
+        const response = await axiosInstance.get('/auth/me');
         setUserData(response.data);
         setLoading(false);
       } catch (err) {
