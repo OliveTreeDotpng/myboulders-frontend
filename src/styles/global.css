@@ -117,6 +117,56 @@ button:active, .button:active {
   transform: translateY(1px);
 }
 
+/* Add these styles after the existing button styles */
+
+/* Form input styles */
+input, select, textarea {
+  background-color: var(--color-surface-variant);
+  color: var(--color-text-primary); /* This ensures text is white/light */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-2);
+  font-family: var(--font-family-base);
+  font-size: 1rem;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(126, 166, 133, 0.2);
+}
+
+/* Fix for dropdown select text */
+select {
+  appearance: none; /* Remove default arrow */
+  padding-right: var(--space-4); /* Space for custom arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255, 255, 255, 0.6)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-2) center;
+  background-size: 16px;
+}
+
+/* Fix for file inputs which have special styling */
+input[type="file"]::file-selector-button {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  padding: var(--space-1) var(--space-2);
+  margin-right: var(--space-2);
+  cursor: pointer;
+}
+
+input[type="file"]::file-selector-button:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* Fix any placeholder text color */
+::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+}
+
 /* Hjälpklasser */
 .bg-surface {
   background-color: var(--color-surface);
