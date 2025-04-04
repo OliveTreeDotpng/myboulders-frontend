@@ -33,7 +33,7 @@ Includes layout, input field, error messages, and profile card styling.
     background-color: var(--color-surface-variant);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--border-radius-md);
-    color: var(--color-text-primary);
+    color: var (--color-text-primary);
     font-size: 1rem;
     transition: all var(--transition-normal);
 }
@@ -111,4 +111,73 @@ Includes layout, input field, error messages, and profile card styling.
     font-style: italic;
     font-size: 0.9rem;
     margin: var(--space-2) 0;
+}
+
+.nav-search-container {
+    position: relative;
+    margin-left: auto;
+}
+
+.nav-search-form {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.nav-search-input {
+    width: 200px;
+    padding: var(--space-2);
+    background-color: var(--color-surface-variant);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-md);
+    color: var(--color-text-primary);
+    font-size: 0.9rem;
+}
+
+.nav-search-button {
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: var(--border-radius-md);
+    color: var(--color-text-primary);
+    cursor: pointer;
+}
+
+.nav-search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--box-shadow-md);
+    margin-top: var(--space-2);
+    z-index: 1000;
+}
+
+.nav-search-result {
+    padding: var(--space-2) var(--space-3);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.nav-search-result:hover {
+    background-color: var(--color-surface-variant);
+}
+
+.nav-search-error {
+    padding: var(--space-2) var(--space-3);
+    color: var(--color-error);
+}
+
+@media (max-width: 768px) {
+    .nav-search-container {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .nav-search-input {
+        width: 100%;
+    }
 }
