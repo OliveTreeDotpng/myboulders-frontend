@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-function GoalForm({ goal, onSave, onCancel }) {
+function GoalForm({ goal, onSave, onCancel, disabled }) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -66,8 +66,21 @@ function GoalForm({ goal, onSave, onCancel }) {
       </div>
       
       <div className="form-actions">
-        <button type="button" className="button button-secondary" onClick={onCancel}>Cancel</button>
-        <button type="submit" className="button button-primary">Save Goal</button>
+        <button 
+          type="button" 
+          className="button button-secondary" 
+          onClick={onCancel}
+          disabled={disabled}
+        >
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          className="button button-primary"
+          disabled={disabled}
+        >
+          {disabled ? 'Saving...' : 'Save Goal'}
+        </button>
       </div>
     </form>
   );

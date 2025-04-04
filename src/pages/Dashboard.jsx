@@ -5,6 +5,7 @@ import { login } from '../services/authApi';
 import '../styles/Dashboard.css';
 
 import { getAllEntries, createEntry, updateEntry, deleteEntry } from '../services/journalApi';
+import { getAllGoals, createGoal, updateGoal, deleteGoal, completeGoal } from '../services/goalsApi';
 
 import StatsOverview from '../components/dashboard/StatsOverview';
 import ClimbsList from '../components/dashboard/ClimbsList';
@@ -26,6 +27,9 @@ function Dashboard() {
   const [completedClimbs, setCompletedClimbs] = useState([]);
   const [currentGoals, setCurrentGoals] = useState([]);
   const [completedGoals, setCompletedGoals] = useState([]);
+
+  // Add isSubmitting state near other state declarations
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check authentication first
   useEffect(() => {
@@ -76,26 +80,28 @@ function Dashboard() {
       }
     };
 
-    const fetchGoals = async () => {
-      try {
-        // Replace mock data with actual API call
-        const currentResponse = await axiosInstance.get('/goals/current');
-        setCurrentGoals(currentResponse.data.goals || []);
-        
-        const completedResponse = await axiosInstance.get('/goals/completed');
-        setCompletedGoals(completedResponse.data.goals || []);
-      } catch (err) {
-        console.error('Failed to fetch goals:', err);
-        // Fallback to empty arrays on error
-        setCurrentGoals([]);
-        setCompletedGoals([]);
-      }
-    };
-
     fetchUserData();
     fetchJournalEntries();
-    fetchGoals();
   }, [isAuthenticated, authLoading, navigate]);
+
+  useEffect(() => {
+    if (isAuthenticated && !authLoading) {
+      fetchGoals();
+    }
+  }, [isAuthenticated, authLoading]);
+
+  // First, create a fetchGoals function at component level
+  const fetchGoals = async () => {
+    try {
+      const goals = await getAllGoals();
+      setCurrentGoals(goals.filter(goal => !goal.completed) || []);
+      setCompletedGoals(goals.filter(goal => goal.completed) || []);
+    } catch (err) {
+      console.error('Failed to fetch goals:', err);
+      setCurrentGoals([]);
+      setCompletedGoals([]);
+    }
+  };
 
   // Rest of the component remains the same
   const handleSaveClimb = async (climbData) => {
@@ -144,72 +150,103 @@ function Dashboard() {
     }
   };
 
-  // Handle saving a goal
-  const handleSaveGoal = (goalData) => {
+  // Then update the handleSaveGoal function
+  const handleSaveGoal = async (goalData) => {
     try {
-      if (goalData.id) {
-        // Update existing goal
-        setCurrentGoals(currentGoals.map(goal => 
-          goal.id === goalData.id ? goalData : goal
-        ));
-      } else {
-        // Create new goal
-        const newId = Math.max(...currentGoals.map(goal => goal.id), 0) + 1;
-        setCurrentGoals([...currentGoals, { ...goalData, id: newId }]);
-      }
+        setIsSubmitting(true);
+        setError(null);
+
+        const formattedGoalData = {
+            title: goalData.title,
+            description: goalData.description || '',
+            target_date: goalData.target_date ? new Date(goalData.target_date).toISOString().split('T')[0] : null,
+            completed: Boolean(goalData.completed)
+        };
+
+        if (goalData.id) {
+            // Update existing goal
+            const response = await updateGoal(goalData.id, formattedGoalData);
+            if (response.data) {
+                setCurrentGoals(prev => 
+                    prev.map(g => g.id === goalData.id ? response.data : g)
+                );
+            }
+        } else {
+            // Create new goal
+            const response = await createGoal(formattedGoalData);
+            if (response.data) {
+                setCurrentGoals(prev => [...prev, response.data]);
+            }
+        }
+
     } catch (err) {
-      console.error('Failed to save goal:', err);
+        console.error('Failed to save goal:', err);
+        setError('Failed to save goal. Please try again.');
+    } finally {
+        setIsSubmitting(false);
     }
   };
 
   // Handle marking a goal as complete
-  const handleCompleteGoal = (id) => {
-    const goalToUpdate = currentGoals.find(goal => goal.id === id);
-    if (!goalToUpdate) return;
-    
-    // Remove from current goals
-    setCurrentGoals(currentGoals.filter(goal => goal.id !== id));
-    
-    // Add to completed goals
-    setCompletedGoals([...completedGoals, { ...goalToUpdate, completed: true }]);
+  const handleCompleteGoal = async (id) => {
+    try {
+      const goalToUpdate = currentGoals.find(goal => goal.id === id);
+      if (!goalToUpdate) return;
+
+      const updatedGoal = await completeGoal(id, true);
+      
+      // Remove from current goals
+      setCurrentGoals(currentGoals.filter(goal => goal.id !== id));
+      // Add to completed goals
+      setCompletedGoals([...completedGoals, updatedGoal]);
+    } catch (err) {
+      console.error('Failed to complete goal:', err);
+    }
   };
 
   // Handle deleting a goal
-  const handleDeleteGoal = (id, isCompleted) => {
-    if (isCompleted) {
-      setCompletedGoals(completedGoals.filter(goal => goal.id !== id));
-    } else {
-      setCurrentGoals(currentGoals.filter(goal => goal.id !== id));
+  const handleDeleteGoal = async (id, isCompleted) => {
+    try {
+      await deleteGoal(id);
+      if (isCompleted) {
+        setCompletedGoals(completedGoals.filter(goal => goal.id !== id));
+      } else {
+        setCurrentGoals(currentGoals.filter(goal => goal.id !== id));
+      }
+    } catch (err) {
+      console.error('Failed to delete goal:', err);
     }
   };
 
   if (authLoading || loading) return <div className="loading">Loading dashboard...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
+  // Update the return statement to include isSubmitting
   return (
     <div className="dashboard-container">
-      <header className="dashboard-header">
-        <h1>My Dashboard</h1>
-        {userData && <p className="welcome-message">Welcome back, {userData.username}!</p>}
-      </header>
+        <header className="dashboard-header">
+            <h1>My Dashboard</h1>
+            {userData && <p className="welcome-message">Welcome back, {userData.username}!</p>}
+        </header>
 
-      <StatsOverview completedClimbs={completedClimbs} />
+        <StatsOverview completedClimbs={completedClimbs} />
 
-      <div className="dashboard-content">
-        <ClimbsList 
-          climbs={completedClimbs}
-          onSaveClimb={handleSaveClimb}
-          onDeleteClimb={handleDeleteClimb}
-        />
+        <div className="dashboard-content">
+            <ClimbsList 
+                climbs={completedClimbs}
+                onSaveClimb={handleSaveClimb}
+                onDeleteClimb={handleDeleteClimb}
+            />
 
-        <GoalsList 
-          currentGoals={currentGoals}
-          completedGoals={completedGoals}
-          onSaveGoal={handleSaveGoal}
-          onCompleteGoal={handleCompleteGoal}
-          onDeleteGoal={handleDeleteGoal}
-        />
-      </div>
+            <GoalsList 
+                currentGoals={currentGoals}
+                completedGoals={completedGoals}
+                onSaveGoal={handleSaveGoal}
+                onCompleteGoal={handleCompleteGoal}
+                onDeleteGoal={handleDeleteGoal}
+                isSubmitting={isSubmitting}
+            />
+        </div>
     </div>
   );
 }
