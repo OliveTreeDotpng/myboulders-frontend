@@ -1,21 +1,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import LoginForm from "../components/LoginForm"; // justera sökvägen om det behövs
+import LoginForm from "../components/LoginForm";
 
 function Login() {
     const navigate = useNavigate();
 
     const handleLoginSuccess = () => {
-        // Redirect after successful login
         navigate("/dashboard");
     };
 
-    return (
-        <div>
-            <h1>Login</h1>
-            <LoginForm onLoginSuccess={handleLoginSuccess} />
-        </div>
-    );
+    return <LoginForm onLoginSuccess={handleLoginSuccess} />;
 }
 
 export default Login;
