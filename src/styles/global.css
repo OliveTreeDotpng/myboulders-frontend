@@ -3,11 +3,11 @@
   --color-background: #121212;
   --color-surface: #1e1e1e;
   --color-surface-variant: #2a2a2a;
-  --color-primary: #7ea685;      /* Mossa/skogsgrön */
+  --color-primary: #7ea685;
   --color-primary-dark: #556b58;
   --color-primary-light: #a4c2ab;
-  --color-secondary: #a67d5b;    /* Jordig brun */
-  --color-accent: #c9a66b;       /* Sandfärgad accent */
+  --color-secondary: #a67d5b;
+  --color-accent: #c9a66b;
 
   /* Text och ikoner */
   --color-text-primary: rgba(255, 255, 255, 0.87);
@@ -117,7 +117,7 @@ button:active, .button:active {
   transform: translateY(1px);
 }
 
-/* Hjälpklasser för färganvändning */
+/* Hjälpklasser */
 .bg-surface {
   background-color: var(--color-surface);
 }
@@ -160,9 +160,8 @@ button:active, .button:active {
   padding: 0 var(--space-3);
 }
 
-/* Add Achievement Form Styles */
+/* Add Achievement Form */
 .add-achievement {
-  /* Add spacing and background for the form container */
   margin-top: var(--space-4);
   padding: var(--space-3);
   background-color: var(--color-surface);
@@ -171,56 +170,97 @@ button:active, .button:active {
 }
 
 .add-achievement h3 {
-  /* Style for the form heading */
   margin-bottom: var(--space-2);
   color: var(--color-text-primary);
 }
 
 .add-achievement .input {
-  /* Style for the input field */
-  width: 100%; /* Full width */
-  padding: var(--space-2); /* Inner padding */
-  margin-bottom: var(--space-2); /* Spacing below the input */
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
-  border-radius: var(--border-radius-md); /* Rounded corners */
-  background-color: var(--color-surface-variant); /* Background color */
-  color: var(--color-text-primary); /* Text color */
-  font-size: 1rem; /* Font size */
+  width: 100%;
+  padding: var(--space-2);
+  margin-bottom: var(--space-2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-md);
+  background-color: var(--color-surface-variant);
+  color: var(--color-text-primary);
+  font-size: 1rem;
 }
 
 .add-achievement .input:focus {
-  /* Focus state for the input field */
-  outline: none; /* Remove default outline */
-  border-color: var(--color-primary); /* Highlight border */
-  box-shadow: 0 0 0 2px rgba(126, 166, 133, 0.2); /* Add subtle shadow */
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(126, 166, 133, 0.2);
 }
 
 .add-achievement .button {
-  /* Style for the Add button */
-  display: inline-block; /* Inline block for proper alignment */
-  padding: var(--space-2) var(--space-4); /* Padding for size */
-  font-size: 1rem; /* Font size */
-  font-weight: 500; /* Slightly bold text */
-  border-radius: var(--border-radius-md); /* Rounded corners */
-  cursor: pointer; /* Pointer cursor on hover */
-  background-color: var(--color-primary); /* Primary color background */
-  color: var(--color-text-on-primary); /* Text color on primary background */
-  transition: background-color var(--transition-fast); /* Smooth transition */
+  display: inline-block;
+  padding: var(--space-2) var(--space-4);
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  transition: background-color var(--transition-fast);
 }
 
 .add-achievement .button:hover {
-  /* Hover state for the button */
-  background-color: var(--color-primary-dark); /* Darker primary color */
+  background-color: var(--color-primary-dark);
 }
 
 .add-achievement .error-text {
-  /* Style for error messages */
-  margin-top: var(--space-2); /* Spacing above the error text */
-  color: var(--color-error); /* Error color */
-  font-size: 0.875rem; /* Slightly smaller font size */
+  margin-top: var(--space-2);
+  color: var(--color-error);
+  font-size: 0.875rem;
 }
 
-/* Authentication Form Styles */
+/* Loading Spinner */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+}
+
+.loading::after {
+  content: '';
+  width: 20px;
+  height: 20px;
+  margin-left: 12px;
+  border: 2px solid var(--color-primary);
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error Message (Generic) */
+.error-message {
+  background-color: rgb(253, 237, 237);
+  color: rgb(95, 33, 32);
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+  border: 1px solid rgba(95, 33, 32, 0.2);
+}
+
+/* Success Message (Generic) */
+.success-message {
+  background-color: rgb(230, 255, 236);
+  color: rgb(10, 78, 36);
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+  border: 1px solid rgba(10, 78, 36, 0.2);
+}
+
+/* Auth Form Layout */
 .auth-container {
   min-height: 100vh;
   display: flex;
